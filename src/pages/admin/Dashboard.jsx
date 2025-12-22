@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   BarChart,
   Bar,
@@ -12,10 +13,32 @@ import {
   ResponsiveContainer
 } from "recharts";
 
+import api from "../../services/api";
+
 export default function Dashboard() {
-  const jumlahUser = 250;
-  const jumlahTransaksi = 5000000;
-  const jumlahEvent = 75;
+  const [jumlahUser, setJumlahUser] = useState(0);
+  const [jumlahTransaksi, setJumlahTransaksi] = useState(0);
+  const [jumlahEvent, setJumlahEvent] = useState(0);
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const [userRes, eventRes, trxRes] = await Promise.all([
+          api.get("/users/count").catch(() => ({ data: 0 })),
+          api.get("/events/count").catch(() => ({ data: 0 })),
+          api.get("/transactions/count").catch(() => ({ data: 0 }))
+        ]);
+
+        setJumlahUser(userRes.data || 0);
+        setJumlahEvent(eventRes.data || 0);
+        setJumlahTransaksi(trxRes.data || 0);
+      } catch (err) {
+        console.error("Gagal load dashboard admin");
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
 
   const prediksiUser = Math.round(jumlahUser * 1.15);
   const prediksiTransaksi = Math.round(jumlahTransaksi * 1.1);
@@ -79,7 +102,6 @@ export default function Dashboard() {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-
                   <Bar dataKey="sekarang" fill="#16a34a" name="Sekarang" />
                   <Bar dataKey="prediksi" fill="#2563eb" name="Prediksi" />
                 </BarChart>
@@ -115,24 +137,7 @@ export default function Dashboard() {
               </ResponsiveContainer>
             </div>
           </div>
-
-          {/* SIMPLE PREDIKSI BOX */}
-          <div className="bg-gray-100 p-4 rounded-lg min-h-60">
-            <p className="font-semibold mb-2">Prediksi Event Lainnya</p>
-            <div className="w-full h-40 bg-white rounded-lg shadow-inner flex flex-col justify-center items-center text-center p-4">
-              <p className="text-gray-600 text-sm">Event Tambahan Diprediksi</p>
-              <p className="text-2xl font-bold text-red-500">
-                = {prediksiEvent}
-              </p>
-            </div>
-          </div>
         </div>
-      </div>
-
-      {/* Placeholder Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white p-6 rounded-xl shadow min-h-[200px]" />
-        <div className="bg-white p-6 rounded-xl shadow min-h-[200px]" />
       </div>
     </div>
   );

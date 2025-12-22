@@ -4,12 +4,19 @@ import cors from "cors";
 import dotenv from "dotenv";
 import db from "./config/db.js";
 import jwt from "jsonwebtoken";
+import path from "path";
 
-// Routes
+// Routes Admin
 import adminRoutes from "./routes/adminRoutes.js";
+
+// Route User
+import authRoutes from "./routes/authRoutes.js";
+import eventRoutes from "./routes/eventRoutes.js";
+
 
 dotenv.config();
 const app = express();
+const PORT = process.env.PORT || 5000;
 
 // =========================
 //     MIDDLEWARE GLOBAL
@@ -21,6 +28,8 @@ app.use(
   })
 );
 
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+
 // ⚠️ BODY PARSER WAJIB sebelum routes
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -29,65 +38,13 @@ app.use(express.urlencoded({ extended: true }));
 //        ROUTES
 // =========================
 app.use("/api/admin", adminRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/events", eventRoutes);
 
-// =========================
-//     LOGIN ADMIN API
-// =========================
-app.post("/api/admin/login", (req, res) => {
-  const { name, email, password } = req.body;
-
-  console.log("🟢 Login attempt:", name, email, password);
-
-  if (!email || !password) {
-    return res.status(400).json({ message: "Email & password required" });
-  }
-
-  db.query("SELECT * FROM admins WHERE email = ?", [email], (err, result) => {
-    if (err) return res.status(500).json({ message: "Database error" });
-
-    if (result.length === 0) {
-      return res.status(404).json({ message: "Admin not found" });
-    }
-
-    const admin = result[0];
-
-    if (password !== admin.password) {
-      return res.status(401).json({ message: "Invalid password" });
-    }
-
-    // ⚠ Update admin name jika berbeda & dikirim dari frontend
-    if (name && name !== admin.name) {
-      db.query(
-        "UPDATE admins SET name = ? WHERE id = ?",
-        [name, admin.id],
-        (err2) => {
-          if (err2) console.log("Name update failed:", err2);
-        }
-      );
-    }
-
-    // Buat JWT token
-    const token = jwt.sign(
-      { id: admin.id, role: admin.role },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" }
-    );
-
-    res.json({
-      message: "Login success",
-      token,
-      admin: {
-        id: admin.id,
-        name: name || admin.name,
-        email: admin.email
-      }
-    });
-  });
-});
 
 // =========================
 //        SERVER
 // =========================
-app.listen(process.env.PORT, () => {
-  console.log(`Server running on port ${process.env.PORT}`);
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
