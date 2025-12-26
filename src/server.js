@@ -12,6 +12,7 @@ import adminRoutes from "./routes/adminRoutes.js";
 // Route User
 import authRoutes from "./routes/authRoutes.js";
 import eventRoutes from "./routes/eventRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 
 
 dotenv.config();
@@ -31,7 +32,8 @@ app.use(
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 // ⚠️ BODY PARSER WAJIB sebelum routes
-app.use(express.json());
+// app.use(express.json());
+app.use(express.json({ type: "*/*" }));
 app.use(express.urlencoded({ extended: true }));
 
 // =========================
@@ -40,6 +42,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/admin", adminRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/events", eventRoutes);
+app.use("/api/users", userRoutes);
 
 
 // =========================

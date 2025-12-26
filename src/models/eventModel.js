@@ -65,3 +65,13 @@ export const updateEvent = (id, data) => {
 export const deleteEvent = (id) => {
   return db.query("DELETE FROM events WHERE id=?", [id]);
 };
+
+// GET BY ID (DETAIL)
+export const getEventById = (id) => {
+  return db.query(
+    `SELECT id, title, description, location, price, image, type
+     FROM events
+     WHERE id = ? AND status = 'active'`,
+    [id]
+  );
+};

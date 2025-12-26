@@ -12,6 +12,7 @@ export default function CrudEventPage() {
   const [loading, setLoading] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const [showConfirm, setShowConfirm] = useState(false);
 
 
   const [form, setForm] = useState({
@@ -58,7 +59,7 @@ export default function CrudEventPage() {
   };
 
   // ✅ CREATE / UPDATE
-  const handleSubmit = async () => {
+  const handleSave = async () => {
     if (!form.title || !form.location || !form.price) return;
 
     const formData = new FormData();
@@ -94,6 +95,7 @@ export default function CrudEventPage() {
       });
     } finally {
       setLoading(false);
+      setShowConfirm(false); // ✅ tutup modal
     }
   };
 
@@ -101,7 +103,7 @@ export default function CrudEventPage() {
     <div className="flex w-full min-h-screen bg-gray-100">
       <div className="flex-1 p-6">
         {/* HEADER */}
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
           <h1 className="text-xl font-semibold">Kelola Event</h1>
           <button
             onClick={() => {
@@ -125,7 +127,7 @@ export default function CrudEventPage() {
         {/* FORM */}
         {showForm && (
           <div className="bg-white p-4 rounded-xl shadow mb-6">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <input
                 placeholder="Nama Event"
                 value={form.title}
@@ -136,12 +138,12 @@ export default function CrudEventPage() {
                 placeholder="Kota"
                 value={form.location}
                 onChange={(e) => setForm({ ...form, location: e.target.value })}
-                className="border p-2 rounded"
+                className="border p-2 rounded col-span-1 md:col-span-2"
               />
               <select
                 value={form.price}
                 onChange={(e) => setForm({ ...form, price: e.target.value })}
-                className="border p-2 rounded"
+                className="border p-2 rounded col-span-1 md:col-span-2"
               >
                 <option value="">Pilih Harga</option>
                 {Array.from({ length: 10 }).map((_, i) => (
@@ -181,7 +183,7 @@ export default function CrudEventPage() {
                 />
               )}
               <button
-                onClick={handleSubmit}
+                onClick={() => setShowConfirm(true)}
                 disabled={loading}
                 className="px-4 py-2 bg-green-500 text-white rounded-lg"
               >
@@ -203,13 +205,13 @@ export default function CrudEventPage() {
             events.map((event) => (
               <div
                 key={event.id}
-                className="flex items-center justify-between border-b py-3"
+                className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b py-4"
               >
-                <div className="flex items-center gap-4">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                   {event.image && (
                     <img
                       src={`http://localhost:5000/uploads/${event.image}`}
-                      className="w-24 h-24 rounded object-cover"
+                      className="w-full sm:w-24 h-40 sm:h-24 rounded object-cover"
                     />
                   )}
                   <div>
@@ -220,7 +222,7 @@ export default function CrudEventPage() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                   <p className="text-green-600 font-medium">
                     Rp {event.price?.toLocaleString()}
                   </p>
@@ -242,6 +244,31 @@ export default function CrudEventPage() {
           )}
         </div>
       </div>
+      {showConfirm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-lg w-full max-w-sm p-6">
+            <h2 className="text-lg font-semibold mb-2">Konfirmasi</h2>
+            <p className="text-gray-600 mb-6">
+              Yakin ingin {editingId ? "update" : "simpan"} event ini?
+            </p>
+
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setShowConfirm(false)}
+                className="px-4 py-2 rounded-lg border"
+              >
+                Batal
+              </button>
+              <button
+                onClick={handleSave}
+                className="px-4 py-2 bg-green-500 text-white rounded-lg"
+              >
+                Ya, Simpan
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

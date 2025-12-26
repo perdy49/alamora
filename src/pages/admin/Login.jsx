@@ -42,7 +42,7 @@ export default function AdminLogin() {
 
       <form
         onSubmit={handleLogin}
-        className="relative z-10 rounded-2xl px-10 py-14 w-[360px]"
+        className="relative z-10 rounded-2xl w-full max-w-[360px] px-6 py-10 md:px-10 md:py-14"
         style={{
           backgroundColor: "#43B573CC",
           backdropFilter: "blur(4px)",

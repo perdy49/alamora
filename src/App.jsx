@@ -34,7 +34,7 @@ function App() {
       <Route path="/kunjungan" element={<Kunjungan />} />
       <Route path="/pembelian-tiket" element={<PembelianTiket />} />
       <Route path="/Profile" element={<Profile />} />
-      <Route path="/detail" element={<Detail />} />
+      <Route path="/detail/:id" element={<Detail />} />
 
       {/* ADMIN LOGIN */}
       <Route path="/admin/login" element={<AdminLogin />} />

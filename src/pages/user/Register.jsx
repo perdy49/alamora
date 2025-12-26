@@ -13,7 +13,7 @@ function RightPanel({ images }) {
   const [i, setI] = useState(0);
 
   return (
-    <div className="w-1/2 bg-yellow-100 p-12 flex flex-col items-center">
+    <div className="w-full h-full bg-yellow-100 p-12 flex flex-col items-center justify-center">
       <h2 className="mb-6 text-lg">Daftarkan Akunmu dulu ya</h2>
 
       {/* Image slider */}
@@ -84,10 +84,10 @@ export default function Register() {
   const images = [img1, img1, img1];
 
   return (
-    <div className="flex">
+    <div className="flex w-full min-h-screen flex-col md:flex-row items-stretch">
       {/* LEFT FORM PANEL */}
-      <div className="w-1/2 bg-white p-10 flex items-center justify-center">
-        <div className="w-[350px] bg-gray-200 rounded-2xl p-8 shadow-md">
+      <div className="w-full md:w-1/2 bg-white px-4 md:p-10 flex items-center justify-center">
+        <div className="w-full max-w-[350px] bg-gray-200 rounded-2xl p-6 md:p-8 shadow-md">
           <h1 className="text-center text-2xl mb-6 font-serif">
             Buat Akun Baru
           </h1>
@@ -131,7 +131,7 @@ export default function Register() {
                 <button
                   type="button"
                   onClick={() => setShow(!show)}
-                  className="absolute right-3 top-4 text-green-600 w-6 h-6"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-green-600 w-6 h-6"
                 >
                   <img src={show ? eyeOffIcon : eyeIcon} alt="toggle" />
                 </button>
@@ -165,7 +165,9 @@ export default function Register() {
       </div>
 
       {/* RIGHT IMAGE PANEL */}
-      <RightPanel images={images} />
+      <div className="hidden md:block md:w-1/2">
+        <RightPanel images={images} />
+      </div>
     </div>
   );
 }

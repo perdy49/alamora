@@ -14,7 +14,7 @@ function LeftPanel({ images }) {
   const [i, setI] = useState(0);
 
   return (
-    <div className="w-1/2 bg-[#F5DCA0] flex flex-col items-center justify-center p-10">
+    <div className="w-full h-full bg-[#F5DCA0] flex flex-col items-center justify-center p-10">
       <h2 className="text-xl mb-6 font-medium">Selamat Datang</h2>
 
       {/* IMAGE SLIDER */}
@@ -86,14 +86,18 @@ export default function Login() {
   const images = [img1, img1, img1];
 
   return (
-    <div className="flex w-full min-h-screen">
+    <div className="flex w-full min-h-screen flex-col md:flex-row items-stretch">
       {/* LEFT */}
-      <LeftPanel images={images} />
+      <div className="hidden md:block md:w-1/2">
+        <LeftPanel images={images} />
+      </div>
 
       {/* RIGHT */}
-      <div className="w-1/2 flex items-center justify-center bg-white">
-        <div className="w-[360px] bg-[#D9D9D9] p-10 rounded-2xl shadow-md">
-          <h1 className="text-center text-2xl font-semibold mb-8">Login</h1>
+      <div className="w-full md:w-1/2 flex items-center justify-center bg-white px-4">
+        <div className="w-full max-w-[360px] bg-[#D9D9D9] p-6 md:p-10 rounded-2xl shadow-md">
+          <h1 className="text-center text-xl md:text-2xl font-semibold mb-8">
+            Login
+          </h1>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Username */}
@@ -124,7 +128,7 @@ export default function Login() {
                 <button
                   type="button"
                   onClick={() => setShow(!show)}
-                  className="absolute right-3 top-[18px]"
+                  className="absolute right-3 top-1/2 -translate-y-1/2"
                 >
                   <img
                     src={show ? eyeOff : eye}
@@ -141,7 +145,7 @@ export default function Login() {
             </div>
 
             {/* Submit button */}
-            <button className="w-full bg-[#3DBA68] text-white rounded-md py-2 text-lg shadow">
+            <button className="w-full bg-[#3DBA68] text-white rounded-md py-2 md:py-3 text-base md:text-lg shadow">
               Sign-In
             </button>
 

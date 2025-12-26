@@ -33,13 +33,13 @@ export default function DataKeuangan() {
   return (
     <div className="p-6">
       {/* Header */}
-      <h1 className="text-2xl font-bold">Transaksi Keuangan</h1>
+      <h1 className="text-xl sm:text-2xl font-bold">Transaksi Keuangan</h1>
       <p className="text-gray-600 mb-6">
         Kejujuran harus selalu di utamakan ya
       </p>
 
       {/* Harga Section */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 mt-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8 mt-4">
         {hargaList.map((item, i) => (
           <div
             key={i}
@@ -49,7 +49,7 @@ export default function DataKeuangan() {
             <h2 className="text-xl font-bold">{item.harga}</h2>
 
             {item.canEdit ? (
-              <button className="px-4 py-1 bg-green-500 text-white rounded-full shadow">
+              <button className="px-4 py-2 bg-green-500 text-white rounded-full shadow w-full sm:w-auto">
                 Rubah Harga
               </button>
             ) : (
@@ -67,7 +67,7 @@ export default function DataKeuangan() {
       </h2>
 
       {/* Dropdown Bulan */}
-      <div className="bg-white p-4 rounded-xl shadow mb-4">
+      <div className="bg-white p-4 rounded-xl shadow mb-6">
         <button className="flex items-center justify-between w-full text-left font-semibold">
           Data Bulan January
           <span>▼</span>
@@ -79,7 +79,7 @@ export default function DataKeuangan() {
         {laporan.map((data) => (
           <div
             key={data.id}
-            className="bg-white p-4 rounded-xl shadow flex justify-between items-center"
+            className="bg-white p-4 rounded-xl shadow flex flex-col md:flex-row md:justify-between md:items-center gap-4"
           >
             <div>
               <p className="font-medium">{data.email}</p>
@@ -87,12 +87,12 @@ export default function DataKeuangan() {
               <p className="text-sm text-gray-500">{data.tanggal}</p>
             </div>
 
-            <div className="flex items-center gap-3">
-              <span className="px-4 py-1 bg-green-500 text-white rounded-full font-medium">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+              <span className="px-4 py-1 bg-green-500 text-white rounded-full font-medium w-fit">
                 {data.metode}
               </span>
 
-              <button className="px-4 py-1 bg-gray-200 rounded-full hover:bg-gray-300 shadow">
+              <button className="px-4 py-2 bg-gray-200 rounded-full hover:bg-gray-300 shadow w-full sm:w-auto">
                 Download
               </button>
             </div>

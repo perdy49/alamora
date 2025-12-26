@@ -8,7 +8,7 @@ export default function WisataPage() {
       <nav className="w-full bg-white py-4 shadow-sm">
         <div className="max-w-6xl mx-auto flex items-center justify-between px-4">
           {/* LOGO + NAMA */}
-          <div className="flex items-center space-x-6">
+          <div className="flex items-center space-x-3">
             <h1 className="text-2xl font-semibold">Alamora</h1>
             <img
               src="/src/assets/Images/logo1.png"
@@ -18,7 +18,7 @@ export default function WisataPage() {
           </div>
 
           {/* MENU */}
-          <ul className="flex space-x-6 font-medium text-gray-700">
+          <ul className="hidden md:flex space-x-6 font-medium text-gray-700">
             <NavLink
               to="/user/home"
               className={({ isActive }) =>
@@ -63,20 +63,26 @@ export default function WisataPage() {
               Pembelian-Tiket
             </NavLink>
           </ul>
+          <div className="md:hidden flex gap-4 text-sm text-gray-700">
+            <NavLink to="/user/home">Beranda</NavLink>
+            <NavLink to="/berita-wisata">Berita</NavLink>
+            <NavLink to="/kunjungan">Kunjungan</NavLink>
+            <NavLink to="/pembelian-tiket">Tiket</NavLink>
+          </div>
         </div>
       </nav>
 
       {/* SEARCH SECTION */}
-      <div className="w-[80%] bg-gray-200 mt-10 py-10 px-6 rounded-lg">
+      <div className="w-full md:w-[90%] lg:w-[80%] bg-gray-200 mt-10 py-10 px-4 md:px-6 rounded-lg">
         <div className="flex justify-center mb-16">
           <input
             placeholder="Cari Disini..."
-            className="w-[60%] px-5 py-3 rounded-full shadow bg-white border border-gray-300"
+            className="w-full md:w-[60%] px-5 py-3 rounded-full shadow bg-white border border-gray-300"
           />
         </div>
 
         {/* SECTION 1 */}
-        <div className="relative flex justify-between items-center mt-10 overflow-hidden">
+        <div className="relative flex flex-col lg:flex-row gap-10 items-center mt-10 overflow-hidden">
           {/* BACKGROUND PETA */}
           <div
             className="absolute inset-0 bg-[url('/src/assets/Images/fotoBg1.png')]
@@ -84,7 +90,7 @@ export default function WisataPage() {
           ></div>
 
           {/* SEMUA KONTEN (TEKS + FOTO) */}
-          <div className="relative z-10 w-[45%]">
+          <div className="relative z-10 w-full lg:w-[45%]">
             <h1 className="text-4xl font-serif mb-4">The Lake District</h1>
             <p className="leading-relaxed text-gray-700 mb-6">
               Terletak di barat laut Inggris, The Lake District merupakan salah
@@ -97,7 +103,7 @@ export default function WisataPage() {
             </button>
           </div>
 
-          <div className="relative z-10 flex gap-4">
+          <div className="relative z-10 flex gap-4 flex-wrap justify-center lg:justify-start">
             <img
               src="https://images.unsplash.com/photo-1513635269975-59663e0ac1ad"
               className="w-40 h-84 rounded-lg object-cover"
@@ -116,13 +122,13 @@ export default function WisataPage() {
         </div>
 
         {/* SECTION 2 */}
-        <div className="flex justify-between items-center mt-24">
+        <div className="flex flex-col lg:flex-row gap-10 items-center mt-24">
           <img
             src="https://plus.unsplash.com/premium_photo-1661876927592-7ce56910bbda"
             className="w-[45%] h-[350px] object-cover rounded-xl"
           />
 
-          <div className="w-[45%]">
+          <div className="w-full lg:w-[45%]">
             <h1 className="text-4xl font-serif mb-4">Pulau Komodo Indonesia</h1>
             <p className="leading-relaxed text-gray-700 mb-6">
               Pulau Komodo merupakan salah satu destinasi wisata unggulan
@@ -166,7 +172,7 @@ export default function WisataPage() {
             </button>
           </div>
 
-          <div className="grid grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3].map((i) => (
               <div key={i} className="bg-white rounded-xl p-4 shadow">
                 <img
@@ -191,7 +197,7 @@ export default function WisataPage() {
 
       {/* FOOTER*/}
       <footer className="bg-gray-300 py-10 w-full">
-        <div className="max-w-6xl mx-auto px-4 flex justify-between">
+        <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row gap-8 md:justify-between">
           <div>
             <h1 className="text-2xl font-semibold">Alamora</h1>
             <p className="text-gray-600 mt-3">

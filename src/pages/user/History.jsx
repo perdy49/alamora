@@ -1,16 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import { Search, Trash2 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 const RiwayatPembelian = () => {
+  const [showRefund, setShowRefund] = useState(false);
+
   return (
     <div className="w-full min-h-screen bg-[#dedede] flex flex-col items-center py-10">
-      {/* CONTAINER */}
-      <div className="w-[1100px] bg-white rounded-2xl shadow">
-        {/* NAVBAR TOP */}
-        <div className="flex items-center justify-between px-6 py-4 border-b">
+      {/* ================= NAVBAR (TERPISAH) ================= */}
+      <div className="w-full max-w-[1100px] bg-white rounded-2xl shadow mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 px-4 sm:px-6 py-4">
           <div className="flex gap-10 text-gray-700 font-medium">
-            <ul className="flex space-x-6 font-medium text-gray-700">
+            <ul className="flex flex-wrap gap-4 sm:space-x-6 font-medium text-gray-700">
               <NavLink
                 to="/user/home"
                 className={({ isActive }) =>
@@ -58,23 +59,25 @@ const RiwayatPembelian = () => {
           </div>
 
           {/* Search */}
-          <div className="flex items-center bg-gray-100 px-4 py-2 rounded-full w-[250px]">
+          <div className="flex items-center bg-gray-100 px-4 py-2 rounded-full w-full sm:w-[250px]">
             <input
               type="text"
               placeholder="Cari Disini"
-              className="flex-1 outline-none"
+              className="flex-1 outline-none bg-transparent"
             />
             <Search size={18} className="text-gray-600" />
           </div>
         </div>
+      </div>
 
-        {/* CONTENT */}
-        <div className="p-6">
+      {/* ================= CARD CONTENT ================= */}
+      <div className="w-full max-w-[1100px] bg-white rounded-2xl shadow">
+        <div className="p-4 sm:p-6">
           {/* TITLE */}
           <h1 className="text-xl font-semibold mb-6">Riwayat Pembelian</h1>
 
           {/* TABS */}
-          <div className="flex gap-6 mb-6">
+          <div className="flex flex-wrap gap-3 sm:gap-6 mb-6">
             <button className="bg-[#4dbd74] text-white px-4 py-2 rounded-full">
               Semua
             </button>
@@ -84,7 +87,7 @@ const RiwayatPembelian = () => {
           </div>
 
           {/* INFO BOX */}
-          <div className="bg-gray-100 px-6 py-3 rounded-xl flex items-center justify-between mb-8">
+          <div className="bg-gray-100 px-4 sm:px-6 py-3 rounded-xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-8">
             <p className="text-gray-700 text-sm">
               Kamu Telah memesan <b>9 Tiket wisata</b> dalam 1 Bulan terakhir
             </p>
@@ -94,22 +97,18 @@ const RiwayatPembelian = () => {
           {/* LIST PEMBELIAN */}
           <div className="space-y-5">
             {/* ITEM 1 */}
-            <div className="bg-white p-4 rounded-xl shadow flex items-center justify-between">
-              {/* LEFT */}
+            <div className="bg-white p-4 rounded-xl shadow flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div className="flex items-center gap-4">
                 <img
+                  className="w-24 sm:w-28 h-20 object-cover rounded-xl"
                   src="https://i.ibb.co/56C47Jg/lake.jpg"
-                  className="w-28 h-20 object-cover rounded-xl"
+                  alt=""
                 />
-
                 <div>
                   <h3 className="font-semibold">Danau Pompei Italia</h3>
-
                   <p className="text-gray-600 text-sm mt-1">
                     Wisata Luar Negeri • Alam dengan kota
                   </p>
-
-                  {/* Status Dibayar */}
                   <div className="flex items-center gap-2 mt-1">
                     <div className="w-3 h-3 bg-[#4dbd74] rounded-full"></div>
                     <span className="text-[#4dbd74] text-sm">Dibayar</span>
@@ -117,30 +116,33 @@ const RiwayatPembelian = () => {
                 </div>
               </div>
 
-              {/* RIGHT */}
-              <div className="text-right">
+              <div className="flex sm:flex-col justify-between sm:items-end gap-2 text-sm sm:text-base">
                 <p className="font-semibold text-gray-700">Rp 9.000.000</p>
                 <button className="text-[#4dbd74] text-sm underline">
                   Code QR
                 </button>
+                <button
+                  onClick={() => setShowRefund(true)}
+                  className="bg-[#4dbd74] text-white text-xs px-4 py-1 rounded-full hover:bg-green-600"
+                >
+                  Refund
+                </button>
               </div>
             </div>
 
-            {/* ITEM 2 (copy) */}
-            <div className="bg-white p-4 rounded-xl shadow flex items-center justify-between">
+            {/* ITEM 2 */}
+            <div className="bg-white p-4 rounded-xl shadow flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div className="flex items-center gap-4">
                 <img
+                  className="w-24 sm:w-28 h-20 object-cover rounded-xl"
                   src="https://i.ibb.co/56C47Jg/lake.jpg"
-                  className="w-28 h-20 object-cover rounded-xl"
+                  alt=""
                 />
-
                 <div>
                   <h3 className="font-semibold">Danau Pompei Italia</h3>
-
                   <p className="text-gray-600 text-sm mt-1">
                     Wisata Luar Negeri • Alam dengan kota
                   </p>
-
                   <div className="flex items-center gap-2 mt-1">
                     <div className="w-3 h-3 bg-[#4dbd74] rounded-full"></div>
                     <span className="text-[#4dbd74] text-sm">Dibayar</span>
@@ -148,16 +150,67 @@ const RiwayatPembelian = () => {
                 </div>
               </div>
 
-              <div className="text-right">
+              <div className="flex sm:flex-col justify-between sm:items-end gap-2 text-sm sm:text-base">
                 <p className="font-semibold text-gray-700">Rp 9.000.000</p>
                 <button className="text-[#4dbd74] text-sm underline">
                   Code QR
+                </button>
+                <button
+                  onClick={() => setShowRefund(true)}
+                  className="bg-[#4dbd74] text-white text-xs px-4 py-1 rounded-full hover:bg-green-600"
+                >
+                  Refund
                 </button>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* ================= MODAL REFUND ================= */}
+      {showRefund && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-white w-full max-w-[360px] rounded-2xl p-6 shadow-lg">
+            <h2 className="text-lg font-semibold mb-1">
+              Silahkan isi data untuk Refund
+            </h2>
+            <p className="text-sm text-gray-500 mb-4">
+              Data keluhan lengkap akan disetujui admin
+            </p>
+
+            <div className="space-y-3">
+              <input
+                className="w-full bg-green-100 px-4 py-2 rounded-full outline-none"
+                placeholder="Email"
+              />
+              <input
+                className="w-full bg-green-100 px-4 py-2 rounded-full outline-none"
+                placeholder="Keluhan"
+              />
+              <input
+                className="w-full bg-green-100 px-4 py-2 rounded-full outline-none"
+                placeholder="Total yang dibayarkan"
+              />
+              <input
+                className="w-full bg-green-100 px-4 py-2 rounded-full outline-none"
+                placeholder="Untuk wisata ke"
+              />
+            </div>
+
+            <div className="flex justify-end gap-3 mt-5">
+              <button
+                onClick={() => setShowRefund(false)}
+                className="bg-red-200 text-red-600 px-4 py-2 rounded-full text-sm"
+              >
+                Batalkan
+              </button>
+              <button className="bg-green-400 text-white px-4 py-2 rounded-full text-sm">
+                Kirim
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

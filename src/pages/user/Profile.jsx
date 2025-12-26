@@ -10,31 +10,44 @@ import {
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { X } from "lucide-react";
 
 const ProfilePage = () => {
-    const [openSidebar, setOpenSidebar] = useState(true);
-    const [avatar, setAvatar] = useState("https://i.ibb.co/LYtpjZ6/girl.jpg");
-    const navigate = useNavigate();
-    const handleUpload = (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
+  const [openSidebar, setOpenSidebar] = useState(true);
+  const [avatar, setAvatar] = useState("https://i.ibb.co/LYtpjZ6/girl.jpg");
+  const [showFAQ, setShowFAQ] = useState(false);
+  const [showUpdate, setShowUpdate] = useState(false);
+  const navigate = useNavigate();
 
-      const imageURL = URL.createObjectURL(file);
-      setAvatar(imageURL);
-    };
+  const handleUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const imageURL = URL.createObjectURL(file);
+    setAvatar(imageURL);
+  };
 
-    const handleDelete = () => {
-      setAvatar(null);
-    };
-
+  const handleDelete = () => {
+    setAvatar(null);
+  };
 
   return (
-    <div className="w-full min-h-screen bg-[#dedede] flex">
+    <div className="w-full min-h-screen bg-[#dedede] flex relative">
+      {/* HAMBURGER MOBILE */}
+      <button
+        onClick={() => setOpenSidebar(!openSidebar)}
+        className="absolute top-4 right-4 z-50 bg-white p-2 rounded-lg shadow sm:hidden"
+      >
+        {openSidebar ? (
+          <X className="text-[#4dbd74]" size={28} />
+        ) : (
+          <Menu className="text-[#4dbd74]" size={28} />
+        )}
+      </button>
       {/* SIDEBAR */}
       <div
-        className={`bg-white shadow-lg h-screen p-6 flex flex-col transition-all duration-300 ${
-          openSidebar ? "w-64" : "w-20"
-        }`}
+        className={`bg-white shadow-lg h-screen p-6 flex flex-col transition-all duration-300
+        fixed sm:relative z-40
+        ${openSidebar ? "w-64 left-0" : "w-20 -left-20 sm:left-0"}`}
       >
         {/* Hamburger */}
         <button
@@ -43,12 +56,13 @@ const ProfilePage = () => {
         >
           <Menu size={28} />
         </button>
-
         {/* MENU LIST */}
         <ul className="space-y-4 mt-10">
-          {/* HOME */}
           <li
-            onClick={() => navigate("/user/home")}
+            onClick={() => {
+              navigate("/user/home");
+              setOpenSidebar(false);
+            }}
             className={`flex items-center gap-3 px-3 py-2 rounded-xl cursor-pointer ${
               openSidebar && "hover:bg-[#e8f7f0]"
             }`}
@@ -57,13 +71,16 @@ const ProfilePage = () => {
             {openSidebar && <span>Home</span>}
           </li>
 
-          {/* PROFILE - ACTIVE */}
           <li className="flex items-center gap-3 px-3 py-2 rounded-xl bg-[#4dbd74] text-white">
             <User />
             {openSidebar && <span>Profile</span>}
           </li>
 
           <li
+            onClick={() => {
+              navigate("/pembelian-tiket");
+              setOpenSidebar(false);
+            }}
             className={`flex items-center gap-3 px-3 py-2 rounded-xl cursor-pointer ${
               openSidebar && "hover:bg-[#e8f7f0]"
             }`}
@@ -73,6 +90,11 @@ const ProfilePage = () => {
           </li>
 
           <li
+            onClick={() => {
+              setShowFAQ(true);
+              setShowUpdate(false);
+              setOpenSidebar(false);
+            }}
             className={`flex items-center gap-3 px-3 py-2 rounded-xl cursor-pointer ${
               openSidebar && "hover:bg-[#e8f7f0]"
             }`}
@@ -82,6 +104,11 @@ const ProfilePage = () => {
           </li>
 
           <li
+            onClick={() => {
+              setShowUpdate(true);
+              setShowFAQ(false);
+              setOpenSidebar(false);
+            }}
             className={`flex items-center gap-3 px-3 py-2 rounded-xl cursor-pointer ${
               openSidebar && "hover:bg-[#e8f7f0]"
             }`}
@@ -102,26 +129,31 @@ const ProfilePage = () => {
         </ul>
       </div>
 
+      {/* OVERLAY MOBILE */}
+      {openSidebar && (
+        <div
+          onClick={() => setOpenSidebar(false)}
+          className="fixed inset-0 bg-black/30 sm:hidden z-30"
+        />
+      )}
+
       {/* MAIN CONTENT */}
-      <div className="flex-1 p-10">
-        {/* Breadcrumb */}
+      <div className="flex-1 p-4 sm:p-10">
         <p className="text-gray-600 mb-4 text-sm">
           Beranda <span className="mx-2">/</span> Profile
         </p>
 
-        {/* TITLE */}
-        <h1 className="text-2xl font-semibold mb-6">Informasi Personal</h1>
+        <h1 className="text-xl sm:text-2xl font-semibold mb-6">
+          Informasi Personal
+        </h1>
 
         {/* PROFILE CARD */}
-        {/* PROFILE CARD */}
-        <div className="bg-white p-6 rounded-2xl shadow-md flex items-center gap-6 mb-10 max-w-4xl">
-          {/* Avatar */}
+        <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-md flex flex-col sm:flex-row items-center gap-6 mb-10 max-w-4xl">
           <img
             src={avatar || "https://via.placeholder.com/150?text=No+Image"}
             className="w-24 h-24 rounded-full object-cover border"
           />
 
-          {/* Hidden file input */}
           <input
             type="file"
             accept="image/*"
@@ -130,7 +162,6 @@ const ProfilePage = () => {
             onChange={handleUpload}
           />
 
-          {/* Buttons */}
           <div className="flex gap-3">
             <button
               onClick={() => document.getElementById("avatarInput").click()}
@@ -149,9 +180,8 @@ const ProfilePage = () => {
         </div>
 
         {/* FORM */}
-        <div className="bg-white p-6 rounded-2xl shadow-md max-w-4xl">
-          {/* ROW 1 */}
-          <div className="grid grid-cols-2 gap-6 mb-6">
+        <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-md max-w-4xl">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
             <div>
               <label className="text-gray-700">Nama Awal</label>
               <input
@@ -169,10 +199,7 @@ const ProfilePage = () => {
                 className="w-full mt-1 p-2 border rounded-lg"
               />
             </div>
-          </div>
 
-          {/* ROW 2 */}
-          <div className="grid grid-cols-2 gap-6 mb-6">
             <div>
               <label className="text-gray-700">Email</label>
               <input
@@ -192,7 +219,6 @@ const ProfilePage = () => {
             </div>
           </div>
 
-          {/* EDIT BUTTON */}
           <div className="flex justify-end">
             <button className="px-6 py-2 bg-[#4dbd74] text-white rounded-full">
               Edit
@@ -200,6 +226,88 @@ const ProfilePage = () => {
           </div>
         </div>
       </div>
+
+      {/* FAQ MODAL */}
+      {showFAQ && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
+          <div className="bg-white w-full max-w-xl rounded-2xl p-6 shadow-lg relative">
+            <button
+              onClick={() => setShowFAQ(false)}
+              className="absolute top-4 right-4 text-gray-500 hover:text-red-500"
+            >
+              <X />
+            </button>
+
+            <h2 className="text-xl font-semibold mb-4">
+              Frequently Asked Questions
+            </h2>
+
+            <div className="space-y-4 text-sm text-gray-700">
+              <div>
+                <p className="font-medium">
+                  Bagaimana cara membeli tiket wisata?
+                </p>
+                <p>
+                  Pilih destinasi wisata, tentukan tanggal kunjungan, lalu
+                  lakukan pembayaran melalui metode yang tersedia.
+                </p>
+              </div>
+
+              <div>
+                <p className="font-medium">Apakah tiket bisa dibatalkan?</p>
+                <p>
+                  Pembatalan tiket mengikuti kebijakan masing-masing penyedia
+                  wisata dan dapat dilihat sebelum checkout.
+                </p>
+              </div>
+
+              <div>
+                <p className="font-medium">
+                  Apakah tiket langsung aktif setelah bayar?
+                </p>
+                <p>
+                  Ya, setelah pembayaran berhasil tiket akan langsung aktif dan
+                  dapat dilihat di riwayat pembelian.
+                </p>
+              </div>
+
+              <div>
+                <p className="font-medium">
+                  Bagaimana jika terjadi kendala saat masuk wisata?
+                </p>
+                <p>
+                  Silakan hubungi customer service melalui menu bantuan atau
+                  kontak yang tersedia.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* UPDATE MODAL */}
+      {showUpdate && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
+          <div className="bg-white w-full max-w-lg rounded-2xl p-6 shadow-lg relative">
+            <button
+              onClick={() => setShowUpdate(false)}
+              className="absolute top-4 right-4 text-gray-500 hover:text-red-500"
+            >
+              <X />
+            </button>
+
+            <h2 className="text-xl font-semibold mb-4">Pengumuman Update</h2>
+
+            <div className="text-gray-600 text-sm">
+              <p>Saat ini belum ada pengumuman atau pembaruan sistem.</p>
+              <p className="mt-2">
+                Silakan cek kembali secara berkala untuk mendapatkan informasi
+                terbaru.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

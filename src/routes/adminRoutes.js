@@ -1,8 +1,16 @@
 import express from "express";
-import { adminLogin } from "../controllers/adminController.js";
+import {
+  adminLogin,
+  getAllUsers,
+  deleteUserByAdmin
+} from "../controllers/adminController.js";
 
 const router = express.Router();
 
 router.post("/login", adminLogin);
+
+// CRUD USER (ADMIN)
+router.get("/users", getAllUsers);
+router.delete("/users/:id", deleteUserByAdmin);
 
 export default router;

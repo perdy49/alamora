@@ -4,7 +4,8 @@ import {
   getPublicEvents,
   createEvent,
   updateEvent,
-  deleteEvent
+  deleteEvent,
+  getEventById
 } from "../controllers/eventController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 import { upload } from "../middleware/upload.js";
@@ -14,6 +15,8 @@ const router = express.Router();
 // GET
 router.get("/", getAllEvents);
 router.get("/public", getPublicEvents);
+router.get("/:id", getEventById);
+
 
 // POST + UPLOAD + AUTH
 router.post("/", authMiddleware, upload.single("image"), createEvent);

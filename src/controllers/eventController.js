@@ -50,3 +50,16 @@ export const deleteEvent = async (req, res) => {
   await Event.deleteEvent(id);
   res.json({ message: "Event berhasil dihapus" });
 };
+
+// GET /events/:id (DETAIL)
+export const getEventById = async (req, res) => {
+  const { id } = req.params;
+
+  const [rows] = await Event.getEventById(id);
+
+  if (rows.length === 0) {
+    return res.status(404).json({ message: "Event tidak ditemukan" });
+  }
+
+  res.json(rows[0]);
+};

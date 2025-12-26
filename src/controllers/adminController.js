@@ -1,5 +1,6 @@
 import db from "../config/db.js";
 
+/* ========== LOGIN ADMIN (SUDAH ADA) ========== */
 export const adminLogin = async (req, res) => {
   const { name, email, password } = req.body;
 
@@ -31,6 +32,33 @@ export const adminLogin = async (req, res) => {
       message: "Login success",
       admin
     });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+/* ========== CRUD USER OLEH ADMIN ========== */
+
+// GET /admin/users
+export const getAllUsers = async (req, res) => {
+  try {
+    const [rows] = await db.query(
+      "SELECT id, username, email, created_at FROM users ORDER BY created_at DESC"
+    );
+    res.json(rows);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// DELETE /admin/users/:id
+export const deleteUserByAdmin = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await db.query("DELETE FROM users WHERE id = ?", [id]);
+    res.json({ message: "User deleted" });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "Server error" });
