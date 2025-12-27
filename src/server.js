@@ -14,7 +14,7 @@ import authRoutes from "./routes/authRoutes.js";
 import eventRoutes from "./routes/eventRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import newsRoutes from "./routes/newsRoutes.js";
-
+import transactionRoutes from "./routes/transactionRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -45,6 +45,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/news", newsRoutes);
+app.use("/api/transactions", transactionRoutes);
 
 // =========================
 //        SERVER

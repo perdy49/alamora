@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { ArrowLeft, Share2, User as UserIcon } from "lucide-react";
 import { NavLink, useParams } from "react-router-dom";
 import api from "../../services/api";
+import { createTransaction } from "../../services/transactionService";
 
 const DetailWisata = () => {
   const { id } = useParams(); // 🔑 ambil id dari URL
@@ -10,10 +11,12 @@ const DetailWisata = () => {
   const [showOrder, setShowOrder] = useState(false);
 
   const [orderForm, setOrderForm] = useState({
-    name: "",
     email: "",
-    price: ""
+    nominal: "",
+    paid_date: "",
+    metode: ""
   });
+
 
   useEffect(() => {
     api
@@ -21,6 +24,37 @@ const DetailWisata = () => {
       .then((res) => setEvent(res.data))
       .catch(() => setEvent(null));
   }, [id]);
+
+  const handleBayar = async () => {
+    try {
+      // validasi sederhana
+      if (
+        !orderForm.email ||
+        !orderForm.nominal ||
+        !orderForm.paid_date ||
+        !orderForm.metode
+      ) {
+        alert("Lengkapi semua data pembayaran");
+        return;
+      }
+
+      await createTransaction({
+        email: orderForm.email,
+        nominal: orderForm.nominal,
+        paid_date: orderForm.paid_date,
+        metode: orderForm.metode,
+        event_id: id
+      });
+
+      alert("Pembayaran berhasil");
+      setShowOrder(false);
+      window.location.href = "/pembelian-tiket";
+
+    } catch (error) {
+      alert("Gagal melakukan pembayaran");
+    }
+  };
+
 
   if (!event) {
     return <p className="text-center mt-20">Loading...</p>;
@@ -30,7 +64,6 @@ const DetailWisata = () => {
     <div className="w-full min-h-screen bg-[#dedede] flex flex-col items-center py-10">
       {/* CONTAINER */}
       <div className="w-full max-w-[1100px] bg-white rounded-2xl shadow p-4 md:p-6">
-
         {/* IMAGE BANNER */}
         <div className="relative">
           {/* KEMBALI — SEKARANG MASUK BANNER ✅ */}
@@ -135,17 +168,6 @@ const DetailWisata = () => {
               Form Pemesanan
             </h2>
 
-            {/* NAMA */}
-            <input
-              type="text"
-              placeholder="Nama Lengkap"
-              value={orderForm.name}
-              onChange={(e) =>
-                setOrderForm({ ...orderForm, name: e.target.value })
-              }
-              className="w-full border rounded-lg px-4 py-2 mb-3"
-            />
-
             {/* EMAIL */}
             <input
               type="email"
@@ -159,9 +181,9 @@ const DetailWisata = () => {
 
             {/* HARGA */}
             <select
-              value={orderForm.price}
+              value={orderForm.nominal}
               onChange={(e) =>
-                setOrderForm({ ...orderForm, price: e.target.value })
+                setOrderForm({ ...orderForm, nominal: e.target.value })
               }
               className="w-full border rounded-lg px-4 py-2 mb-4"
             >
@@ -172,10 +194,33 @@ const DetailWisata = () => {
                 </option>
               ))}
             </select>
+            <input
+              type="date"
+              value={orderForm.paid_date}
+              onChange={(e) =>
+                setOrderForm({ ...orderForm, paid_date: e.target.value })
+              }
+              className="w-full border rounded-lg px-4 py-2 mb-3"
+            />
+            <select
+              value={orderForm.metode}
+              onChange={(e) =>
+                setOrderForm({ ...orderForm, metode: e.target.value })
+              }
+              className="w-full border rounded-lg px-4 py-2 mb-4"
+            >
+              <option value="">Pilih Metode Pembayaran</option>
+              <option value="Dana">Dana</option>
+              <option value="Wallet">Wallet</option>
+              <option value="Transfer">Transfer</option>
+            </select>
 
             {/* BUTTON */}
             <div className="flex gap-3">
-              <button className="flex-1 bg-[#4dbd74] text-white py-2 rounded-full">
+              <button
+                onClick={handleBayar}
+                className="flex-1 bg-[#4dbd74] text-white py-2 rounded-full"
+              >
                 Bayar
               </button>
 

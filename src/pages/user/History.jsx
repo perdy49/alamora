@@ -1,9 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { getMyHistoryDetail } from "../../services/transactionService";
 import { Search, Trash2 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 const RiwayatPembelian = () => {
+  const [history, setHistory] = useState([]);
   const [showRefund, setShowRefund] = useState(false);
+  useEffect(() => {
+    getMyHistoryDetail()
+      .then((res) => setHistory(res))
+      .catch(() => setHistory([]));
+  }, []);
 
   return (
     <div className="w-full min-h-screen bg-[#dedede] flex flex-col items-center py-10">
@@ -96,73 +103,51 @@ const RiwayatPembelian = () => {
 
           {/* LIST PEMBELIAN */}
           <div className="space-y-5">
-            {/* ITEM 1 */}
-            <div className="bg-white p-4 rounded-xl shadow flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <div className="flex items-center gap-4">
-                <img
-                  className="w-24 sm:w-28 h-20 object-cover rounded-xl"
-                  src="https://i.ibb.co/56C47Jg/lake.jpg"
-                  alt=""
-                />
-                <div>
-                  <h3 className="font-semibold">Danau Pompei Italia</h3>
-                  <p className="text-gray-600 text-sm mt-1">
-                    Wisata Luar Negeri • Alam dengan kota
-                  </p>
-                  <div className="flex items-center gap-2 mt-1">
-                    <div className="w-3 h-3 bg-[#4dbd74] rounded-full"></div>
-                    <span className="text-[#4dbd74] text-sm">Dibayar</span>
+            {history.map((item) => (
+              <div
+                key={item.id}
+                className="bg-white p-4 rounded-xl shadow flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+              >
+                <div className="flex items-center gap-4">
+                  {/* IMAGE DUMMY (biar UI tetap rapi) */}
+                  <div className="w-24 sm:w-28 h-20 bg-gray-200 rounded-xl"></div>
+
+                  <div>
+                    {/* KOTA */}
+                    <h3 className="font-semibold">{item.location}</h3>
+
+                    {/* KATEGORI */}
+                    <p className="text-gray-600 text-sm mt-1">{item.type}</p>
+
+                    {/* STATUS */}
+                    <div className="flex items-center gap-2 mt-1">
+                      <div className="w-3 h-3 bg-[#4dbd74] rounded-full"></div>
+                      <span className="text-[#4dbd74] text-sm">
+                        {item.status}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="flex sm:flex-col justify-between sm:items-end gap-2 text-sm sm:text-base">
-                <p className="font-semibold text-gray-700">Rp 9.000.000</p>
-                <button className="text-[#4dbd74] text-sm underline">
-                  Code QR
-                </button>
-                <button
-                  onClick={() => setShowRefund(true)}
-                  className="bg-[#4dbd74] text-white text-xs px-4 py-1 rounded-full hover:bg-green-600"
-                >
-                  Refund
-                </button>
-              </div>
-            </div>
-
-            {/* ITEM 2 */}
-            <div className="bg-white p-4 rounded-xl shadow flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <div className="flex items-center gap-4">
-                <img
-                  className="w-24 sm:w-28 h-20 object-cover rounded-xl"
-                  src="https://i.ibb.co/56C47Jg/lake.jpg"
-                  alt=""
-                />
-                <div>
-                  <h3 className="font-semibold">Danau Pompei Italia</h3>
-                  <p className="text-gray-600 text-sm mt-1">
-                    Wisata Luar Negeri • Alam dengan kota
+                {/* HARGA */}
+                <div className="flex sm:flex-col justify-between sm:items-end gap-2">
+                  <p className="font-semibold text-gray-700">
+                    Rp {Number(item.nominal).toLocaleString()}
                   </p>
-                  <div className="flex items-center gap-2 mt-1">
-                    <div className="w-3 h-3 bg-[#4dbd74] rounded-full"></div>
-                    <span className="text-[#4dbd74] text-sm">Dibayar</span>
-                  </div>
+
+                  <button className="text-[#4dbd74] text-sm underline">
+                    Code QR
+                  </button>
+
+                  <button
+                    onClick={() => setShowRefund(true)}
+                    className="bg-[#4dbd74] text-white text-xs px-4 py-1 rounded-full hover:bg-green-600"
+                  >
+                    Refund
+                  </button>
                 </div>
               </div>
-
-              <div className="flex sm:flex-col justify-between sm:items-end gap-2 text-sm sm:text-base">
-                <p className="font-semibold text-gray-700">Rp 9.000.000</p>
-                <button className="text-[#4dbd74] text-sm underline">
-                  Code QR
-                </button>
-                <button
-                  onClick={() => setShowRefund(true)}
-                  className="bg-[#4dbd74] text-white text-xs px-4 py-1 rounded-full hover:bg-green-600"
-                >
-                  Refund
-                </button>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>
