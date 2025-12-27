@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
 import {
+  getAllNews,
+  createNews,
+  updateNews,
+  deleteNews
+} from "../../services/newsService";
+
+import {
   getEvents,
   createEvent,
   updateEvent,
@@ -8,12 +15,24 @@ import {
 
 export default function CrudEventPage() {
   const [events, setEvents] = useState([]);
+  const [newsEditingId, setNewsEditingId] = useState(null);
+  const [newsImagePreview, setNewsImagePreview] = useState(null);
+  // === NEWS STATE (BARU) ===
+  const [news, setNews] = useState([]);
+  const [newsForm, setNewsForm] = useState({
+    title: "",
+    description: "",
+    category: "lokal",
+    year: "",
+    image: null
+  });
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showNewsForm, setShowNewsForm] = useState(false); // ✅ TAMBAHKAN INI
   const [editingId, setEditingId] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [showConfirm, setShowConfirm] = useState(false);
-
+  const [activeTab, setActiveTab] = useState("product");
 
   const [form, setForm] = useState({
     title: "",
@@ -31,6 +50,12 @@ export default function CrudEventPage() {
   useEffect(() => {
     fetchEvents();
   }, []);
+
+  useEffect(() => {
+    if (activeTab === "news") {
+      fetchNews();
+    }
+  }, [activeTab]);
 
   // ✅ EDIT EVENT
   const handleEdit = (e) => {
@@ -99,33 +124,137 @@ export default function CrudEventPage() {
     }
   };
 
+  // ================= FETCH NEWS =================
+const fetchNews = async () => {
+  const data = await getAllNews();
+  setNews(data || []);
+};
+
+// ================= SAVE NEWS =================
+const handleSaveNews = async () => {
+  if (!newsForm.title || !newsForm.description || !newsForm.year) return;
+
+  const formData = new FormData();
+  formData.append("title", newsForm.title);
+  formData.append("description", newsForm.description);
+  formData.append("category", newsForm.category);
+  formData.append("year", newsForm.year);
+
+  if (newsForm.image) {
+    formData.append("image", newsForm.image);
+  }
+
+  try {
+    if (newsEditingId) {
+      await updateNews(newsEditingId, formData);
+    } else {
+      await createNews(formData);
+    }
+
+    setNewsForm({
+      title: "",
+      description: "",
+      category: "lokal",
+      year: "",
+      image: null
+    });
+
+    setNewsEditingId(null);
+    setNewsImagePreview(null);
+    setShowNewsForm(false);
+    fetchNews();
+
+    alert("News berhasil disimpan ✅");
+  } catch (err) {
+    console.error(err);
+    alert("Gagal menyimpan news ❌");
+  }
+};
+
+// ================= DELETE NEWS =================
+const handleDeleteNews = async (id) => {
+  if (!window.confirm("Hapus news ini?")) return;
+  await deleteNews(id);
+  fetchNews();
+};
+
+
   return (
     <div className="flex w-full min-h-screen bg-gray-100">
       <div className="flex-1 p-6">
         {/* HEADER */}
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
-          <h1 className="text-xl font-semibold">Kelola Event</h1>
-          <button
-            onClick={() => {
-              setShowForm(!showForm);
-              setEditingId(null);
-              setImagePreview(null);
-              setForm({
-                title: "",
-                location: "",
-                price: "",
-                image: null,
-                type: "populer"
-              });
-            }}
-            className="px-4 py-2 bg-green-500 text-white rounded-full shadow"
-          >
-            {showForm ? "Tutup" : "Tambah Event"}
-          </button>
+        <div className="flex flex-col gap-4 mb-6">
+          <h1 className="text-xl font-semibold">Panel Admin</h1>
+
+          <div className="flex gap-4">
+            <button
+              onClick={() => {
+                setActiveTab("product");
+                setShowForm(false);
+              }}
+              className={`px-4 py-2 rounded-full ${
+                activeTab === "product" ? "bg-green-500 text-white" : "border"
+              }`}
+            >
+              Kelola Product
+            </button>
+
+            <button
+              onClick={() => {
+                setActiveTab("news");
+                setShowForm(false);
+              }}
+              className={`px-4 py-2 rounded-full ${
+                activeTab === "news" ? "bg-green-500 text-white" : "border"
+              }`}
+            >
+              Kelola News
+            </button>
+          </div>
+
+          {activeTab === "news" && (
+            <button
+              onClick={() => {
+                setShowNewsForm(!showNewsForm);
+                setNewsImagePreview(null);
+                setNewsForm({
+                  title: "",
+                  description: "",
+                  category: "lokal",
+                  year: "",
+                  image: null
+                });
+              }}
+              className="w-fit px-4 py-2 bg-blue-500 text-white rounded-full shadow"
+            >
+              {showNewsForm ? "Tutup Form News" : "Tambah News"}
+            </button>
+          )}
+
+          {/* TOMBOL TAMBAH EVENT */}
+          {activeTab === "product" && (
+            <button
+              onClick={() => {
+                setShowForm(!showForm);
+                setEditingId(null);
+                setImagePreview(null);
+                setForm({
+                  title: "",
+                  location: "",
+                  price: "",
+                  image: null,
+                  type: "populer"
+                });
+              }}
+              className="w-fit px-4 py-2 bg-green-500 text-white rounded-full shadow"
+            >
+              {showForm ? "Tutup Form" : "Tambah Product"}
+            </button>
+          )}
         </div>
 
         {/* FORM */}
-        {showForm && (
+        {activeTab === "product" && showForm && (
           <div className="bg-white p-4 rounded-xl shadow mb-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <input
@@ -197,52 +326,174 @@ export default function CrudEventPage() {
           </div>
         )}
 
-        {/* LIST EVENT */}
-        <div className="bg-white p-4 rounded-xl shadow">
-          {events.length === 0 ? (
-            <p className="text-center text-gray-500 py-10">Belum ada event</p>
-          ) : (
-            events.map((event) => (
-              <div
-                key={event.id}
-                className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b py-4"
+        {activeTab === "news" && showNewsForm && (
+          <div className="bg-white p-4 rounded-xl shadow mb-6">
+            <div className="grid grid-cols-1 gap-4">
+              <input
+                placeholder="Judul News"
+                value={newsForm.title}
+                onChange={(e) =>
+                  setNewsForm({ ...newsForm, title: e.target.value })
+                }
+                className="border p-2 rounded"
+              />
+
+              <textarea
+                placeholder="Deskripsi"
+                value={newsForm.description}
+                onChange={(e) =>
+                  setNewsForm({ ...newsForm, description: e.target.value })
+                }
+                className="border p-2 rounded"
+              />
+
+              <select
+                value={newsForm.category}
+                onChange={(e) =>
+                  setNewsForm({ ...newsForm, category: e.target.value })
+                }
+                className="border p-2 rounded"
               >
-                <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-                  {event.image && (
-                    <img
-                      src={`http://localhost:5000/uploads/${event.image}`}
-                      className="w-full sm:w-24 h-40 sm:h-24 rounded object-cover"
-                    />
-                  )}
-                  <div>
-                    <p className="font-medium">{event.title}</p>
-                    <p className="text-sm text-gray-500">
-                      {event.location} • <b>{event.type}</b>
+                <option value="lokal">Lokal</option>
+                <option value="nasional">Nasional</option>
+                <option value="internasional">Internasional</option>
+              </select>
+
+              <input
+                placeholder="Tahun"
+                value={newsForm.year}
+                onChange={(e) =>
+                  setNewsForm({ ...newsForm, year: e.target.value })
+                }
+                className="border p-2 rounded"
+              />
+
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  if (!file) return;
+
+                  setNewsForm({ ...newsForm, image: file });
+                  setNewsImagePreview(URL.createObjectURL(file));
+                }}
+                className="border p-2 rounded"
+              />
+            </div>
+
+            {newsImagePreview && (
+              <img
+                src={newsImagePreview}
+                className="w-24 h-24 mt-4 rounded object-cover"
+              />
+            )}
+
+            <button
+              onClick={handleSaveNews}
+              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
+            >
+              Simpan News
+            </button>
+          </div>
+        )}
+
+        {/* LIST EVENT */}
+        {activeTab === "product" && (
+          <div className="bg-white p-4 rounded-xl shadow">
+            {events.length === 0 ? (
+              <p className="text-center text-gray-500 py-10">Belum ada event</p>
+            ) : (
+              events.map((event) => (
+                <div
+                  key={event.id}
+                  className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b py-4"
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                    {event.image && (
+                      <img
+                        src={`http://localhost:5000/uploads/${event.image}`}
+                        className="w-full sm:w-24 h-40 sm:h-24 rounded object-cover"
+                      />
+                    )}
+                    <div>
+                      <p className="font-medium">{event.title}</p>
+                      <p className="text-sm text-gray-500">
+                        {event.location} • <b>{event.type}</b>
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                    <p className="text-green-600 font-medium">
+                      Rp {event.price?.toLocaleString()}
                     </p>
+                    <button
+                      onClick={() => handleEdit(event)}
+                      className="px-3 py-1 text-sm bg-yellow-400 rounded"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(event.id)}
+                      className="px-3 py-1 text-sm bg-red-500 text-white rounded"
+                    >
+                      Hapus
+                    </button>
                   </div>
                 </div>
+              ))
+            )}
+          </div>
+        )}
 
-                <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-                  <p className="text-green-600 font-medium">
-                    Rp {event.price?.toLocaleString()}
-                  </p>
-                  <button
-                    onClick={() => handleEdit(event)}
-                    className="px-3 py-1 text-sm bg-yellow-400 rounded"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(event.id)}
-                    className="px-3 py-1 text-sm bg-red-500 text-white rounded"
-                  >
-                    Hapus
-                  </button>
+        {activeTab === "news" && (
+          <div className="bg-white p-4 rounded-xl shadow">
+            {news.length === 0 ? (
+              <p className="text-center text-gray-500 py-10">Belum ada news</p>
+            ) : (
+              news.map((n) => (
+                <div
+                  key={n.id}
+                  className="flex justify-between items-center border-b py-4"
+                >
+                  <div>
+                    <p className="font-medium">{n.title}</p>
+                    <p className="text-sm text-gray-500">
+                      {n.category} • {n.year}
+                    </p>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => {
+                        setNewsForm({
+                          title: n.title,
+                          description: n.description,
+                          category: n.category,
+                          year: n.year,
+                          image: null
+                        });
+                        setNewsEditingId(n.id);
+                        setShowNewsForm(true);
+                      }}
+                      className="px-3 py-1 text-sm bg-yellow-400 rounded"
+                    >
+                      Edit
+                    </button>
+
+                    <button
+                      onClick={() => handleDeleteNews(n.id)}
+                      className="px-3 py-1 text-sm bg-red-500 text-white rounded"
+                    >
+                      Hapus
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))
-          )}
-        </div>
+              ))
+            )}
+          </div>
+        )}
       </div>
       {showConfirm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">

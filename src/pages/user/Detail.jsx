@@ -15,7 +15,6 @@ const DetailWisata = () => {
     price: ""
   });
 
-
   useEffect(() => {
     api
       .get(`/events/${id}`)
@@ -31,22 +30,33 @@ const DetailWisata = () => {
     <div className="w-full min-h-screen bg-[#dedede] flex flex-col items-center py-10">
       {/* CONTAINER */}
       <div className="w-full max-w-[1100px] bg-white rounded-2xl shadow p-4 md:p-6">
-        {/* KEMBALI */}
-        <NavLink to="/user/home">
-          <button className="flex items-center text-gray-700 md:text-white md:absolute md:top-4 md:left-4 mb-4 z-10">
-            <ArrowLeft size={20} className="mr-2" /> Kembali
-          </button>
-        </NavLink>
 
         {/* IMAGE BANNER */}
         <div className="relative">
+          {/* KEMBALI — SEKARANG MASUK BANNER ✅ */}
+          <NavLink to="/user/home">
+            <button
+              className="
+        absolute top-4 left-4 z-20
+        flex items-center gap-2
+        bg-white/80 backdrop-blur
+        px-3 py-2 rounded-full
+        text-gray-800
+        hover:bg-white
+      "
+            >
+              <ArrowLeft size={18} />
+              <span className="text-sm font-medium">Kembali</span>
+            </button>
+          </NavLink>
+
           <img
             src={`http://localhost:5000/uploads/${event.image}`}
             className="w-full h-[420px] object-cover rounded-xl"
           />
 
           {/* CARD INFO WISATA */}
-          <div className="static md:absolute md:top-5 md:right-5 bg-white p-5 rounded-xl shadow-md w-full md:w-[280px] mt-4 md:mt-0">
+          <div className="absolute top-5 right-5 bg-white p-5 rounded-xl shadow-md w-[280px]">
             <div className="flex justify-between items-center mb-2">
               <h2 className="font-bold text-lg">{event.title}</h2>
               <Share2 size={20} className="text-gray-700 cursor-pointer" />

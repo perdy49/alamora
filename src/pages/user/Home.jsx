@@ -220,7 +220,6 @@ export default function Home() {
       </section>
 
       {/* FOOTER */}
-      {/* FOOTER*/}
       <footer className="bg-gray-300 py-10 w-full">
         <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row gap-8 md:justify-between">
           <div>
