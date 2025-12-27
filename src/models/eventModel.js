@@ -75,3 +75,7 @@ export const getEventById = (id) => {
     [id]
   );
 };
+
+export const countEvents = () => {
+  return db.query("SELECT COUNT(*) AS total FROM events");
+};

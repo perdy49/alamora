@@ -89,3 +89,7 @@ export const getHistoryWithEvent = (user_id) => {
     [user_id]
   );
 };
+
+export const countTransactions = () => {
+  return db.query("SELECT COUNT(*) AS total FROM transactions");
+};

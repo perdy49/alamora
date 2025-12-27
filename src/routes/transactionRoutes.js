@@ -8,6 +8,7 @@ import {
   getMyHistoryDetail
 } from "../controllers/transactionController.js";
 
+import { countTransactions } from "../controllers/transactionController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = express.Router();
@@ -16,6 +17,7 @@ const router = express.Router();
 router.get("/history", authMiddleware, getMyHistoryDetail);
 router.post("/", authMiddleware, createTransaction);
 router.get("/my", authMiddleware, getMyTransactions);
+router.get("/count", authMiddleware, countTransactions);
 
 /* ADMIN */
 router.get("/", authMiddleware, getAllTransactions);

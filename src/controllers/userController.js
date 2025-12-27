@@ -22,6 +22,7 @@
 // };
 
 import db from "../config/db.js";
+import * as User from "../models/userModel.js";
 
 /**
  * GET /users/me
@@ -79,5 +80,14 @@ export const updateMe = async (req, res) => {
   } catch (error) {
     console.error("UPDATE PROFILE ERROR:", error);
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const countUsers = async (req, res) => {
+  try {
+    const [rows] = await User.countUsers();
+    res.json(rows[0].total);
+  } catch (error) {
+    res.status(500).json({ message: "Gagal hitung user" });
   }
 };

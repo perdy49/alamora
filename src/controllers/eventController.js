@@ -63,3 +63,12 @@ export const getEventById = async (req, res) => {
 
   res.json(rows[0]);
 };
+
+export const countEvents = async (req, res) => {
+  try {
+    const [rows] = await Event.countEvents();
+    res.json(rows[0].total);
+  } catch (error) {
+    res.status(500).json({ message: "Gagal hitung event" });
+  }
+};

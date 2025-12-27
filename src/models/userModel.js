@@ -12,3 +12,7 @@ export const findUserById = async (id) => {
 
   return rows.length ? rows[0] : null;
 };
+
+export const countUsers = () => {
+  return db.query("SELECT COUNT(*) AS total FROM users");
+};

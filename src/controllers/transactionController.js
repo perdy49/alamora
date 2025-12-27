@@ -98,3 +98,12 @@ export const getMyHistoryDetail = async (req, res) => {
     });
   }
 };
+
+export const countTransactions = async (req, res) => {
+  try {
+    const [rows] = await Transaction.countTransactions();
+    res.json(rows[0].total);
+  } catch (error) {
+    res.status(500).json({ message: "Gagal hitung transaksi" });
+  }
+};
