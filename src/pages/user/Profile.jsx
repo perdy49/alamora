@@ -11,24 +11,73 @@ import {
 import { NavLink } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { X } from "lucide-react";
+import { useEffect } from "react";
+import { getMyProfile, updateMyProfile } from "../../services/userService";
 
 const ProfilePage = () => {
   const [openSidebar, setOpenSidebar] = useState(true);
-  const [avatar, setAvatar] = useState("https://i.ibb.co/LYtpjZ6/girl.jpg");
+  const [isEditing, setIsEditing] = useState(false);
+
+  const [profile, setProfile] = useState({
+    first_name: "",
+    last_name: "",
+    email: "",
+    username: "",
+    avatar: ""
+  });
   const [showFAQ, setShowFAQ] = useState(false);
   const [showUpdate, setShowUpdate] = useState(false);
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const data = await getMyProfile();
+        setProfile(data);
+      } catch (error) {
+        console.error("Gagal ambil profile", error);
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
   const navigate = useNavigate();
 
   const handleUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    const imageURL = URL.createObjectURL(file);
-    setAvatar(imageURL);
+
+    const preview = URL.createObjectURL(file);
+    setProfile((prev) => ({
+      ...prev,
+      avatar: preview
+    }));
+  };
+
+  const handleChange = (e) => {
+    setProfile({
+      ...profile,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleSave = async () => {
+    try {
+      await updateMyProfile(profile);
+      setIsEditing(false);
+      alert("Profile berhasil diperbarui");
+    } catch (error) {
+      console.error(error);
+      alert("Gagal update profile");
+    }
   };
 
   const handleDelete = () => {
-    setAvatar(null);
+    setProfile((prev) => ({
+      ...prev,
+      avatar: ""
+    }));
   };
+
 
   return (
     <div className="w-full min-h-screen bg-[#dedede] flex relative">
@@ -150,7 +199,11 @@ const ProfilePage = () => {
         {/* PROFILE CARD */}
         <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-md flex flex-col sm:flex-row items-center gap-6 mb-10 max-w-4xl">
           <img
-            src={avatar || "https://via.placeholder.com/150?text=No+Image"}
+            src={
+              profile.avatar
+                ? profile.avatar
+                : "https://via.placeholder.com/150?text=No+Image"
+            }
             className="w-24 h-24 rounded-full object-cover border"
           />
 
@@ -164,15 +217,19 @@ const ProfilePage = () => {
 
           <div className="flex gap-3">
             <button
+              disabled={!isEditing}
               onClick={() => document.getElementById("avatarInput").click()}
-              className="px-5 py-2 bg-[#4dbd74] text-white rounded-full"
+              className={`px-5 py-2 rounded-full text-white
+    ${isEditing ? "bg-[#4dbd74]" : "bg-gray-400 cursor-not-allowed"}`}
             >
               Upload
             </button>
 
             <button
+              disabled={!isEditing}
               onClick={handleDelete}
-              className="px-5 py-2 bg-red-500 text-white rounded-full"
+              className={`px-5 py-2 rounded-full text-white
+    ${isEditing ? "bg-red-500" : "bg-gray-400 cursor-not-allowed"}`}
             >
               Hapus
             </button>
@@ -186,7 +243,10 @@ const ProfilePage = () => {
               <label className="text-gray-700">Nama Awal</label>
               <input
                 type="text"
-                defaultValue="Indah"
+                name="first_name"
+                value={profile.first_name || ""}
+                onChange={handleChange}
+                disabled={!isEditing}
                 className="w-full mt-1 p-2 border rounded-lg"
               />
             </div>
@@ -195,7 +255,10 @@ const ProfilePage = () => {
               <label className="text-gray-700">Nama Akhir</label>
               <input
                 type="text"
-                defaultValue="Melati"
+                name="last_name"
+                value={profile.last_name || ""}
+                onChange={handleChange}
+                disabled={!isEditing}
                 className="w-full mt-1 p-2 border rounded-lg"
               />
             </div>
@@ -203,8 +266,11 @@ const ProfilePage = () => {
             <div>
               <label className="text-gray-700">Email</label>
               <input
-                type="email"
-                defaultValue="Indah1@gmail.com"
+                type="text"
+                name="email"
+                value={profile.email || ""}
+                onChange={handleChange}
+                disabled={!isEditing}
                 className="w-full mt-1 p-2 border rounded-lg"
               />
             </div>
@@ -213,15 +279,21 @@ const ProfilePage = () => {
               <label className="text-gray-700">Username</label>
               <input
                 type="text"
-                defaultValue="IndahAja"
+                name="username"
+                value={profile.username || ""}
+                onChange={handleChange}
+                disabled={!isEditing}
                 className="w-full mt-1 p-2 border rounded-lg"
               />
             </div>
           </div>
 
           <div className="flex justify-end">
-            <button className="px-6 py-2 bg-[#4dbd74] text-white rounded-full">
-              Edit
+            <button
+              onClick={isEditing ? handleSave : () => setIsEditing(true)}
+              className="px-6 py-2 bg-[#4dbd74] text-white rounded-full"
+            >
+              {isEditing ? "Simpan" : "Edit"}
             </button>
           </div>
         </div>
